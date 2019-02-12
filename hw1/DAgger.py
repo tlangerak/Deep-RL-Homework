@@ -139,7 +139,7 @@ if __name__ == '__main__':
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)
     for dag in range(1000):
         loss = model.learn(1)
-        actions, observations, reward = model.evaluate(scenario, 1000, 20, render=False)
+        actions, observations, reward = model.evaluate(scenario, 1000, 1, render=False)
         rewards.append(reward)
         policy_actions = []
         for i, obs in enumerate(observations):
