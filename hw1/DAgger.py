@@ -1,16 +1,16 @@
+import pickle
+
+import gym
+import matplotlib.pyplot as plt
+import numpy as np
+import tensorflow as tf
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import matplotlib.pyplot as plt
-import random
-import os
-import pickle
-import tensorflow as tf
-import numpy as np
-import tf_util
-import gym
-import load_policy
 import torch.utils.data as data_utils
+
+import load_policy
+import tf_util
 
 
 class Data:
@@ -135,11 +135,11 @@ if __name__ == '__main__':
     figure = plt.figure()
     # Run model to get new obs
     rewards = []
+    model = Model()
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)
     for dag in range(1000):
-        model = Model()
-        optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)
         loss = model.learn(1)
-        actions, observations, reward = model.evaluate(scenario, 1000, 1, render=False)
+        actions, observations, reward = model.evaluate(scenario, 1000, 20, render=False)
         rewards.append(reward)
         policy_actions = []
         for i, obs in enumerate(observations):
@@ -147,9 +147,8 @@ if __name__ == '__main__':
             policy_actions.append(policy_act)
             if (i + 1) % 100 == 0:
                 print(dag, i + 1, len(observations))
+        data.add_data(np.asarray(observations), np.asarray(policy_actions))
 
         plt.clf()
         plt.plot(rewards)
         plt.pause(0.05)
-        data.add_data(np.asarray(observations), np.asarray(policy_actions))
-
